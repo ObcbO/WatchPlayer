@@ -76,7 +76,16 @@ public class Command implements TabExecutor {
                             }
                         }
                         case "kick" -> {
-                            // TODO
+                            Player target = Bukkit.getPlayer(args[1]);
+                            List<Player> watchingPlayers = SpecManager.getWatchedList(player);
+                            if (watchingPlayers.contains(target)) {
+                                SpecManager.stopSpec(target);
+                                assert target != null;
+                                sender.sendMessage("成功踢出" + target.getName());
+                                target.sendMessage("你被" + player.getName() + "踢出观看");
+                            } else {
+                                sender.sendMessage("此玩家未在观看你");
+                            }
                         }
                     }
                 }
