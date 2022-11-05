@@ -1,0 +1,8 @@
+name: WatchPlayer
+version: '${version}'
+main: org.encinet.watchplayer.WatchPlayer
+api-version: 1.19
+authors: [ ObcbO ]
+commands:
+  watch:
+    description: Watch player
