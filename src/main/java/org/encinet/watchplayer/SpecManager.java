@@ -8,29 +8,29 @@ import org.encinet.watchplayer.until.Error;
 import org.encinet.watchplayer.until.Process;
 import org.encinet.watchplayer.until.Store;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.bukkit.GameMode.SPECTATOR;
 
 public class SpecManager {
-    private static final Map<Player, List<Player>> apply = new ConcurrentHashMap<>();// 申请map key是被观看者 value是观看者列表
+    private static final Map<Player, Set<Player>> apply = new ConcurrentHashMap<>();// 申请map key是被观看者 value是观看者列表
     private static final Map<Player, Store> watching = new ConcurrentHashMap<>();// 观看者为key的map
-    private static final Map<Player, List<Player>> watched = new ConcurrentHashMap<>();// 被观看者为key的map
+    private static final Map<Player, Set<Player>> watched = new ConcurrentHashMap<>();// 被观看者为key的map
 
     public static void addApply(Player applicant, Player respondent) {
-        Process.addList(apply, respondent, applicant);
+        Process.addSet(apply, respondent, applicant);
     }
     private static void removeApply(Player applicant, Player respondent) {
-        Process.removeList(apply, respondent, applicant);
+        Process.removeSet(apply, respondent, applicant);
     }
     public static void addWatched(Player applicant, Player respondent) {
-        Process.addList(watched, respondent, applicant);
+        Process.addSet(watched, respondent, applicant);
     }
     // 移除父项内的子项
     public static void removeWatchedPlayers(Player applicant, Player respondent) {
-        Process.removeList(watched, respondent, applicant);
+        Process.removeSet(watched, respondent, applicant);
     }
     // 移除父项
     public static void removeWatched(Player player) {
@@ -47,7 +47,7 @@ public class SpecManager {
      */
     public static void ProcessApply(boolean accept, Player applicant, Player respondent) throws Error {
         if (apply.containsKey(respondent)) {
-            List<Player> list = apply.get(respondent);
+            Set<Player> list = apply.get(respondent);
             if (list.contains(applicant)) {
                 removeApply(applicant, respondent);
                 if (accept) {
@@ -68,9 +68,9 @@ public class SpecManager {
     public static Player ProcessApply(boolean accept, Player respondent) throws Error {
         Player watch;
         if (apply.containsKey(respondent)) {
-            List<Player> list = apply.get(respondent);
-            if (list.size() == 1) {
-                watch = list.get(0);
+            Set<Player> set = apply.get(respondent);
+            if (set.size() == 1) {
+                watch = (Player) set.toArray()[0];
                 removeApply(watch, respondent);
                 if (accept) {
                     startSpec(watch, respondent);
@@ -151,7 +151,7 @@ public class SpecManager {
      * @param player 玩家
      * @return 返回被观看玩家的观看者列表
      */
-    public static List<Player> getWatchedList(Player player) {
+    public static Set<Player> getWatchedList(Player player) {
         return watched.getOrDefault(player, null);
     }
     /**
@@ -165,7 +165,7 @@ public class SpecManager {
      * @param player 玩家
      * @return 返回玩家的申请观看列表
      */
-    public static List<Player> getApplyList(Player player) {
+    public static Set<Player> getApplyList(Player player) {
         return apply.getOrDefault(player, null);
     }
 }

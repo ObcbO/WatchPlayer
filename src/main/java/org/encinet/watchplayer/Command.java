@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class Command implements TabExecutor {
     @Override
@@ -77,7 +78,7 @@ public class Command implements TabExecutor {
                         }
                         case "kick" -> {
                             Player target = Bukkit.getPlayer(args[1]);
-                            List<Player> watchingPlayers = SpecManager.getWatchedList(player);
+                            Set<Player> watchingPlayers = SpecManager.getWatchedList(player);
                             if (watchingPlayers.contains(target)) {
                                 SpecManager.stopSpec(target);
                                 assert target != null;
@@ -112,7 +113,7 @@ public class Command implements TabExecutor {
                 switch (args[0]) {
                     case "kick" -> {
                         if (sender instanceof Player player) {
-                            List<Player> players = SpecManager.getWatchedList(player);
+                            Set<Player> players = SpecManager.getWatchedList(player);
                             if (players != null) {
                                 for (Player n : players) {
                                     String name = n.getName();
@@ -134,7 +135,7 @@ public class Command implements TabExecutor {
                     }
                     case "accept", "deny" -> {
                         if (sender instanceof Player player) {
-                            List<Player> players = SpecManager.getApplyList(player);
+                            Set<Player> players = SpecManager.getApplyList(player);
                             if (players != null) {
                                 for (Player n : players) {
                                     String name = n.getName();

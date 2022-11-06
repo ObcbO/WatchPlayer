@@ -1,6 +1,5 @@
 package org.encinet.watchplayer.event;
 
-import com.destroystokyo.paper.event.player.PlayerStopSpectatingEntityEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -10,7 +9,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.encinet.watchplayer.SpecManager;
 
-import java.util.List;
+import java.util.Set;
 
 public class PlayerEvent implements Listener {
     @EventHandler
@@ -22,15 +21,6 @@ public class PlayerEvent implements Listener {
         }
     }
     @EventHandler
-    public void playerStopSpectatingEntityEvent(PlayerStopSpectatingEntityEvent event) {
-        if (SpecManager.isWatching(event.getPlayer())) {
-            // 取消观看玩家退出到其它玩家的视角 (中键可以选择)
-            event.setCancelled(true);
-            // TODO BUG
-        }
-    }
-
-    @EventHandler
     public void playerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
         Player player = event.getPlayer();
         if (SpecManager.isWatching(player)) {
@@ -39,7 +29,7 @@ public class PlayerEvent implements Listener {
             event.setCancelled(true);
         } else if (SpecManager.isWatched(player) && player.getGameMode() == GameMode.SPECTATOR) {
             // 如果被观看者也改成观察模式 所有观看者都退出观看模式
-            List<Player> watchingPlayers = SpecManager.getWatchedList(player);
+            Set<Player> watchingPlayers = SpecManager.getWatchedList(player);
             for (Player n : watchingPlayers) {
                 SpecManager.stopSpec(n);
                 n.sendMessage("由于" + player.getName() + "也改成观察模式 所以退出观看");
@@ -51,8 +41,12 @@ public class PlayerEvent implements Listener {
     @EventHandler
     public void playerMoveEvent(PlayerMoveEvent event) {
         Player player = event.getPlayer();
+        // 防止玩家以各种奇怪的方式退出指定视角
         if (SpecManager.isWatched(event.getPlayer())) {
             forceTarget(player);
+        } else if (SpecManager.isWatching(event.getPlayer())) {
+            player.setSpectatorTarget(null);
+            player.setSpectatorTarget(Bukkit.getEntity(SpecManager.getWatchingStore(player).view().getUniqueId()));
         }
     }
 
@@ -79,7 +73,7 @@ public class PlayerEvent implements Listener {
         Player player = event.getPlayer();
         if (SpecManager.isWatched(player)) {
             // 如果被观看者退出 所有观看者都退出观看模式
-            List<Player> watchingPlayers = SpecManager.getWatchedList(player);
+            Set<Player> watchingPlayers = SpecManager.getWatchedList(player);
             for (Player n : watchingPlayers) {
                 SpecManager.stopSpec(n);
                 n.sendMessage("由于" + player.getName() + "退出了游戏 所以退出观看");
@@ -97,7 +91,7 @@ public class PlayerEvent implements Listener {
         Player player = event.getPlayer();
         if (SpecManager.isWatched(player)) {
             // 如果被观看者死亡 所有观看者都退出观看模式
-            List<Player> watchingPlayers = SpecManager.getWatchedList(player);
+            Set<Player> watchingPlayers = SpecManager.getWatchedList(player);
             for (Player n : watchingPlayers) {
                 SpecManager.stopSpec(n);
                 n.sendMessage("由于" + player.getName() + "死亡 所以退出观看");
@@ -111,7 +105,7 @@ public class PlayerEvent implements Listener {
     }
 
     private static void forceTarget(Player player) {
-        List<Player> list = SpecManager.getWatchedList(player);
+        Set<Player> list = SpecManager.getWatchedList(player);
         for (Player n : list) {
             // Minecraft特性
             n.setSpectatorTarget(null);
