@@ -97,8 +97,8 @@ public class PlayerEvent implements Listener {
     }
 
     private static void forceTarget(Player player) {
-        Set<Player> list = SpecManager.getWatchedList(player);
-        for (Player n : list) {
+        Set<Player> set = SpecManager.getWatchedList(player);
+        for (Player n : set) {
             // Minecraft特性
             n.setSpectatorTarget(null);
             n.setSpectatorTarget(Bukkit.getEntity(player.getUniqueId()));

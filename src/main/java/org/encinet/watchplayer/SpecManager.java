@@ -22,16 +22,20 @@ public class SpecManager {
     public static void addApply(Player applicant, Player respondent) {
         Process.addSet(apply, respondent, applicant);
     }
+
     private static void removeApply(Player applicant, Player respondent) {
         Process.removeSet(apply, respondent, applicant);
     }
+
     public static void addWatched(Player applicant, Player respondent) {
         Process.addSet(watched, respondent, applicant);
     }
+
     // 移除父项内的子项
     public static void removeWatchedPlayers(Player applicant, Player respondent) {
         Process.removeSet(watched, respondent, applicant);
     }
+
     // 移除父项
     public static void removeWatched(Player player) {
         watched.remove(player);
@@ -96,7 +100,13 @@ public class SpecManager {
             Location location = watch.getLocation();
             watch.setGameMode(SPECTATOR);
             watch.setSpectatorTarget(Bukkit.getEntity(watched.getUniqueId()));
-            watching.put(watch, new Store(watched, location, gamemode));
+            watching.put(watch, new Store(watched, location, gamemode, watch.getInventory().getContents(), watch.getInventory().getArmorContents()));
+
+            watch.getInventory().clear();
+            watch.getInventory().setContents(watched.getInventory().getContents());
+            watch.getInventory().setArmorContents(watched.getInventory().getArmorContents());
+            watch.updateInventory();
+
             addWatched(watch, watched);
         }
     }
@@ -115,6 +125,11 @@ public class SpecManager {
             player.setSpectatorTarget(null);
             player.teleport(store.location());
             player.setGameMode(store.gameMode());// 要先退出才能改模式，要不然事件会被取消
+
+            player.getInventory().clear();
+            player.getInventory().setContents(store.inventories());
+            player.getInventory().setArmorContents(store.armorStacks());
+
             if (watched.isOnline()) {
                 watched.sendMessage(player.getName() + "退出了观看");
             }
@@ -138,6 +153,7 @@ public class SpecManager {
     public static boolean isWatching(Player player) {
         return watching.containsKey(player);
     }
+
     /**
      * 删除观看玩家
      *
@@ -146,6 +162,7 @@ public class SpecManager {
     public static void removeWatching(Player player) {
         watching.remove(player);
     }
+
     /**
      * @param player 玩家
      * @return 玩家是否处在被观看状态
@@ -153,6 +170,7 @@ public class SpecManager {
     public static boolean isWatched(Player player) {
         return watched.containsKey(player);
     }
+
     /**
      * @param player 玩家
      * @return 返回被观看玩家的观看者列表
@@ -160,6 +178,7 @@ public class SpecManager {
     public static Set<Player> getWatchedList(Player player) {
         return watched.getOrDefault(player, null);
     }
+
     /**
      * @param player 玩家
      * @return 返回观看玩家的储存信息
@@ -167,6 +186,7 @@ public class SpecManager {
     public static Store getWatchingStore(Player player) {
         return watching.getOrDefault(player, null);
     }
+
     /**
      * @param player 玩家
      * @return 返回玩家的申请观看列表

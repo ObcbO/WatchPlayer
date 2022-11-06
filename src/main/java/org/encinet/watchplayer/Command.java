@@ -109,6 +109,7 @@ public class Command implements TabExecutor {
                 list.add("deny");
                 list.add("help");
                 list.add("kick");
+                list.add("request");
                 list.add("stop");
             }
             case 2 -> {
@@ -176,6 +177,7 @@ public class Command implements TabExecutor {
                 /watch deny [player] - 拒绝某人观看申请
                 /watch help - 查看帮助
                 /watch kick <player> - 踢出现在正在观看你的某人
+                /watch request <player> - 申请某人观看你
                 /watch stop - 退出观看模式""";
     }
 }
