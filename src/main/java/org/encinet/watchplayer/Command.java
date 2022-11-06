@@ -18,7 +18,7 @@ public class Command implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player player) {// 模式变量
             switch (args.length) {
-                case 0 -> sender.sendMessage("你还没有输入信息");
+                case 0 -> sender.sendMessage(getHelp());
                 case 1 -> {
                     switch (args[0]) {
                         case "apply" -> sender.sendMessage("你还没有输入要观看的玩家");
@@ -88,6 +88,7 @@ public class Command implements TabExecutor {
                                 sender.sendMessage("此玩家未在观看你");
                             }
                         }
+                        default -> sender.sendMessage(getHelp());
                     }
                 }
             }
@@ -106,8 +107,9 @@ public class Command implements TabExecutor {
                 list.add("apply");
                 list.add("accept");
                 list.add("deny");
-                list.add("stop");
+                list.add("help");
                 list.add("kick");
+                list.add("stop");
             }
             case 2 -> {
                 switch (args[0]) {
@@ -162,5 +164,18 @@ public class Command implements TabExecutor {
         if (length > candidate.length()) {
             return false;// 长度超出候选
         } else return candidate.toLowerCase().startsWith(user.toLowerCase());
+    }
+
+    /**
+     * @return 获取帮助信息
+     */
+    private static String getHelp() {
+        return """
+                /watch apply <player> - 申请观看某人
+                /watch accept [player] - 同意某人观看申请
+                /watch deny [player] - 拒绝某人观看申请
+                /watch help - 查看帮助
+                /watch kick <player> - 踢出现在正在观看你的某人
+                /watch stop - 退出观看模式""";
     }
 }
