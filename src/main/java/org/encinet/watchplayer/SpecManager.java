@@ -89,6 +89,8 @@ public class SpecManager {
     private static void startSpec(Player watch, Player watched) throws Error {
         if (watched.getGameMode() == SPECTATOR) {
             throw new Error(watched.getName() + "也处于观看模式");
+        } else if (!watched.isOnline()) {
+            throw new Error(watched.getName() + "已退出游戏");
         } else {
             GameMode gamemode = watch.getGameMode();
             Location location = watch.getLocation();
@@ -107,11 +109,15 @@ public class SpecManager {
     public static void stopSpec(Player player) {
         if (watching.containsKey(player)) {
             Store store = watching.get(player);
-            removeWatchedPlayers(player, store.view());
+            Player watched = store.view();
+            removeWatchedPlayers(player, watched);
             watching.remove(player);
             player.setSpectatorTarget(null);
             player.teleport(store.location());
             player.setGameMode(store.gameMode());// 要先退出才能改模式，要不然事件会被取消
+            if (!watched.isOnline()) {
+                watched.sendMessage(player.getName() + "退出了观看");
+            }
         }
     }
 

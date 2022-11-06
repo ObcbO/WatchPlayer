@@ -27,14 +27,6 @@ public class PlayerEvent implements Listener {
             // 取消观看玩家的更改游戏模式事件
             // 防止观看玩家切换世界造成的游戏模式更改
             event.setCancelled(true);
-        } else if (SpecManager.isWatched(player) && player.getGameMode() == GameMode.SPECTATOR) {
-            // 如果被观看者也改成观察模式 所有观看者都退出观看模式
-            Set<Player> watchingPlayers = SpecManager.getWatchedList(player);
-            for (Player n : watchingPlayers) {
-                SpecManager.stopSpec(n);
-                n.sendMessage("由于" + player.getName() + "也改成观察模式 所以退出观看");
-            }
-            SpecManager.removeWatched(player);
         }
     }
 
