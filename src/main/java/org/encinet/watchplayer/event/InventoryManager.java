@@ -5,6 +5,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.encinet.watchplayer.SpecManager;
 
@@ -24,6 +25,15 @@ public class InventoryManager implements Listener {
                     n.getInventory().setArmorContents(he.getInventory().getArmorContents());
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void InventoryClickEvent(InventoryClickEvent event) {
+        // 防止观看者移动背包物品
+        Player player = (Player) event.getWhoClicked();
+        if (SpecManager.isWatching(player)) {
+            event.setCancelled(true);
         }
     }
 }
