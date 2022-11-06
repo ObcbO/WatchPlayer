@@ -5,14 +5,14 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.encinet.watchplayer.SpecManager;
 
 import java.util.Set;
 
 public class InventoryManager implements Listener {
     @EventHandler
-    public void playerInventoryEvent(InventoryEvent event) {
+    public void playerInventoryEvent(InventoryInteractEvent event) {
         // 背包更新
         Player player = Bukkit.getPlayer(event.getEventName());
         if (SpecManager.isWatched(player)) {

@@ -21,7 +21,7 @@ public class Command implements TabExecutor {
                 case 0 -> sender.sendMessage(getHelp());
                 case 1 -> {
                     switch (args[0]) {
-                        case "apply" -> sender.sendMessage("你还没有输入要观看的玩家");
+                        case "apply", "request" -> sender.sendMessage("你还没有输入要申请的玩家");
                         case "accept", "deny" -> {
                             boolean accept = "accept".equals(args[0]);
                             try {
@@ -41,18 +41,25 @@ public class Command implements TabExecutor {
                 }
                 case 2 -> {
                     switch (args[0]) {
-                        case "apply" -> {
+                        case "apply", "request" -> {
+                            boolean code = "apply".equals(args[0]);
                             if (player.getName().equalsIgnoreCase(args[1])) {
                                 sender.sendMessage("你不能申请观看自己");
                             } else if (SpecManager.isWatching(player)) {
                                 sender.sendMessage("你已在观看模式");
                             } else {
-                                OfflinePlayer owatched = Bukkit.getOfflinePlayer(args[1]);
-                                if (owatched.hasPlayedBefore() || owatched.isOnline()) {
-                                    Player watched = (Player) owatched;
-                                    SpecManager.addApply(player, watched);
-                                    sender.sendMessage("成功发送请求");
-                                    watched.sendMessage("收到一个来自 " + player.getName() + " 的观看请求 请输入/watch accept " + player.getName() + "来同意, 或/watch deny " + player.getName() + "来拒绝");
+                                OfflinePlayer oDesignator = Bukkit.getOfflinePlayer(args[1]);
+                                if (oDesignator.hasPlayedBefore() || oDesignator.isOnline()) {
+                                    Player designator = (Player) oDesignator;
+                                    if (code) {
+                                        // apply
+                                        SpecManager.addApply(player, designator);
+                                        sender.sendMessage("成功发送请求");
+                                        designator.sendMessage("收到一个来自 " + player.getName() + " 的观看请求 请输入/watch accept " + player.getName() + "来同意, 或/watch deny " + player.getName() + "来拒绝");
+                                    } else {
+                                        // TODO request
+                                        sender.sendMessage("TODO...");
+                                    }
                                 } else {
                                     sender.sendMessage("找不到此玩家");
                                 }
@@ -127,7 +134,7 @@ public class Command implements TabExecutor {
                             }
                         }
                     }
-                    case "apply" -> {
+                    case "apply", "request" -> {
                         for (Player n : Bukkit.getOnlinePlayers()) {
                             String name = n.getName();
                             // id不能相同
