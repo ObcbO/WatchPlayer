@@ -1,7 +1,5 @@
 package org.encinet.watchplayer.event;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,15 +13,13 @@ public class InventoryManager implements Listener {
     @EventHandler
     public void playerInventoryEvent(InventoryInteractEvent event) {
         // 背包更新
-        Player player = Bukkit.getPlayer(event.getEventName());
+        Player player = (Player) event.getWhoClicked();
         if (SpecManager.isWatched(player)) {
-            for (HumanEntity he : event.getViewers()) {
-                Set<Player> set = SpecManager.getWatchedList(player);
-                for (Player n : set) {
-                    n.getInventory().clear();
-                    n.getInventory().setContents(he.getInventory().getContents());
-                    n.getInventory().setArmorContents(he.getInventory().getArmorContents());
-                }
+            Set<Player> set = SpecManager.getWatchedList(player);
+            for (Player n : set) {
+                n.getInventory().clear();
+                n.getInventory().setContents(player.getInventory().getContents());
+                n.getInventory().setArmorContents(player.getInventory().getArmorContents());
             }
         }
     }
