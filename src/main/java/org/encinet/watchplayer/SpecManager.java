@@ -115,7 +115,7 @@ public class SpecManager {
             player.setSpectatorTarget(null);
             player.teleport(store.location());
             player.setGameMode(store.gameMode());// 要先退出才能改模式，要不然事件会被取消
-            if (!watched.isOnline()) {
+            if (watched.isOnline()) {
                 watched.sendMessage(player.getName() + "退出了观看");
             }
         }
