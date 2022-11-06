@@ -1,5 +1,6 @@
 package org.encinet.watchplayer.event;
 
+import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -93,6 +94,15 @@ public class PlayerEvent implements Listener {
             // 如果观看者死亡 则退出模式
             SpecManager.stopSpec(player);
             player.sendMessage("由于你死亡 所以退出观看");
+        }
+    }
+
+    @EventHandler
+    public void playerAdvancementCriterionGrantEvent(PlayerAdvancementCriterionGrantEvent event) {
+        // 观看者不能获得进度
+        Player player = event.getPlayer();
+        if (SpecManager.isWatching(player)) {
+            event.setCancelled(true);
         }
     }
 
